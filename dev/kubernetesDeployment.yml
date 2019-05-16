@@ -21,17 +21,4 @@ spec:
         - containerPort: 8000
       imagePullSecrets:
       - name: dupa1-auth
----
-kind: Service
-apiVersion: v1
-metadata:
-  name: whoami
-  labels:
-    name: whoami
-spec:
-  type: ClusterIP
-  ports:
-  - port: 80
-    targetPort: 8000
-  selector:
-    app: whoami
+
