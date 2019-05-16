@@ -1,9 +1,9 @@
- node {
+node {
   def acr = 'acrdemo77.azurecr.io'
   def appName = 'whoami'
   def imageName = "${acr}/${appName}"
   def imageTag = "${imageName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
-  def appRepo = "acrdemmo77.azurecr.io/whoami:v1"
+  def appRepo = "basecampcontreg.azurecr.io/whoami:v1"
 
   checkout scm
   
@@ -24,29 +24,33 @@
         sh("kubectl get ns ${appName}-${env.BRANCH_NAME} || kubectl create ns ${appName}-${env.BRANCH_NAME}")
         withCredentials([usernamePassword(credentialsId: 'dupa1-auth', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
         sh "kubectl -n ${appName}-${env.BRANCH_NAME} get secret dupa1-auth || kubectl --namespace=${appName}-${env.BRANCH_NAME} create secret docker-registry dupa1-auth --docker-server ${acr} --docker-username $USERNAME --docker-password $PASSWORD"
+        }  
         sh("sed -i.bak 's#${appRepo}#${imageTag}#' ./canary/*.yml")
         sh("kubectl --namespace=canary apply -f ./services/")
         sh("kubectl --namespace=canary apply -f ./canary/")
         sh("echo http://`kubectl --namespace=canary get service/${appName} --output=json | jq -r '.status.loadBalancer.ingress[0].ip'` > ${appName}")
         break
-         // Roll out to release env
+    // Roll out to production
     case "release":
-        // Change deployed image in canary to the one we just built
+        // Change deployed image in master to the one we just built
         sh("kubectl get ns ${appName}-${env.BRANCH_NAME} || kubectl create ns ${appName}-${env.BRANCH_NAME}")
         withCredentials([usernamePassword(credentialsId: 'dupa1-auth', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
         sh "kubectl -n ${appName}-${env.BRANCH_NAME} get secret dupa1-auth || kubectl --namespace=${appName}-${env.BRANCH_NAME} create secret docker-registry dupa1-auth --docker-server ${acr} --docker-username $USERNAME --docker-password $PASSWORD"
-        sh("sed -i.bak 's#${appRepo}#${imageTag}#' ./release/*.yml")
+        }  
+        sh("sed -i.bak 's#${appRepo}#${imageTag}#' ./production/*.yml")
         sh("kubectl --namespace=stage apply -f ./services/")
-        sh("kubectl --namespace=stage apply -f ./release/")
+        sh("kubectl --namespace=stage apply -f ./production/")
         sh("echo http://`kubectl --namespace=stage get service/${appName} --output=json | jq -r '.status.loadBalancer.ingress[0].ip'` > ${appName}")
         break
 
+    // Roll out a dev environment
     // Roll out to production
     case "master":
         // Change deployed image in master to the one we just built
         sh("kubectl get ns ${appName}-${env.BRANCH_NAME} || kubectl create ns ${appName}-${env.BRANCH_NAME}")
         withCredentials([usernamePassword(credentialsId: 'dupa1-auth', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
         sh "kubectl -n ${appName}-${env.BRANCH_NAME} get secret dupa1-auth || kubectl --namespace=${appName}-${env.BRANCH_NAME} create secret docker-registry dupa1-auth --docker-server ${acr} --docker-username $USERNAME --docker-password $PASSWORD"
+        }  
         sh("sed -i.bak 's#${appRepo}#${imageTag}#' ./production/*.yml")
         sh("kubectl --namespace=prod apply -f ./services/")
         sh("kubectl --namespace=prod apply -f ./production/")
@@ -59,6 +63,7 @@
         sh("kubectl get ns ${appName}-${env.BRANCH_NAME} || kubectl create ns ${appName}-${env.BRANCH_NAME}")
         withCredentials([usernamePassword(credentialsId: 'dupa1-auth', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
         sh "kubectl -n ${appName}-${env.BRANCH_NAME} get secret dupa1-auth || kubectl --namespace=${appName}-${env.BRANCH_NAME} create secret docker-registry dupa1-auth --docker-server ${acr} --docker-username $USERNAME --docker-password $PASSWORD"
+        }  
         // Don't use public load balancing for development branches
         sh("sed -i.bak 's#${appRepo}#${imageTag}#' ./dev/*.yml")
         sh("kubectl --namespace=${appName}-${env.BRANCH_NAME} apply -f ./dev/")
