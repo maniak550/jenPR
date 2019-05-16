@@ -26,7 +26,7 @@ node {
         sh "kubectl -n ${appName}-${env.BRANCH_NAME} get secret dupa1-auth || kubectl --namespace=${appName}-${env.BRANCH_NAME} create secret docker-registry dupa1-auth --docker-server ${acr} --docker-username $USERNAME --docker-password $PASSWORD"
         }  
         sh("sed -i.bak 's#${appRepo}#${imageTag}#' ./canary/*.yml")
-        sh("kubectl --namespace=canary apply -f ./services/")
+        
         sh("kubectl --namespace=canary apply -f ./canary/")
         sh("echo http://`kubectl --namespace=canary get service/${appName} --output=json | jq -r '.status.loadBalancer.ingress[0].ip'` > ${appName}")
         break
@@ -52,8 +52,8 @@ node {
         sh "kubectl -n ${appName}-${env.BRANCH_NAME} get secret dupa1-auth || kubectl --namespace=${appName}-${env.BRANCH_NAME} create secret docker-registry dupa1-auth --docker-server ${acr} --docker-username $USERNAME --docker-password $PASSWORD"
         }  
         sh("sed -i.bak 's#${appRepo}#${imageTag}#' ./production/*.yml")
-        sh("kubectl --namespace=prod apply -f ./services/")
-        sh("kubectl --namespace=prod apply -f ./dev/")
+        
+        sh("kubectl --namespace=prod apply -f ./canary/")
         sh("echo http://`kubectl --namespace=prod get service/${appName} --output=json | jq -r '.status.loadBalancer.ingress[0].ip'` > ${appName}")
         break
 
