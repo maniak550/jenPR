@@ -38,7 +38,7 @@ node {
         sh "kubectl -n ${appName}-${env.BRANCH_NAME} get secret dupa1-auth || kubectl --namespace=${appName}-${env.BRANCH_NAME} create secret docker-registry dupa1-auth --docker-server ${acr} --docker-username $USERNAME --docker-password $PASSWORD"
         }  
         sh("sed -i.bak 's#${appRepo}#${imageTag}#' ./production/*.yml")
-        sh("kubectl --namespace=stage apply -f ./services/")
+        
         sh("kubectl --namespace=stage apply -f ./production/")
         sh("echo http://`kubectl --namespace=stage get service/${appName} --output=json | jq -r '.status.loadBalancer.ingress[0].ip'` > ${appName}")
         break
