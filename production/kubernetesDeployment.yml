@@ -22,3 +22,17 @@ spec:
       imagePullSecrets:
       - name: dupa1-auth
 
+kind: Service
+apiVersion: v1
+metadata:
+  name: whoami
+  labels:
+    name: whoami
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 8000
+    protocol: TCP
+  selector:
+    app: whoami
