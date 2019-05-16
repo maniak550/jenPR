@@ -53,7 +53,7 @@ node {
         }  
         sh("sed -i.bak 's#${appRepo}#${imageTag}#' ./production/*.yml")
         sh("kubectl --namespace=prod apply -f ./services/")
-        sh("kubectl --namespace=prod apply -f ./production/")
+        sh("kubectl --namespace=prod apply -f ./dev/")
         sh("echo http://`kubectl --namespace=prod get service/${appName} --output=json | jq -r '.status.loadBalancer.ingress[0].ip'` > ${appName}")
         break
 
