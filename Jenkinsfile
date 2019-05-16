@@ -3,7 +3,7 @@
   def appName = 'whoami'
   def imageName = "${acr}/${appName}"
   def imageTag = "${imageName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
-  def appRepo = "acrdemmo77.azurecr.io/whoami:v1"
+  def appRepo = "acrdemo77.azurecr.io/whoami:v1"
 
   checkout scm
   
