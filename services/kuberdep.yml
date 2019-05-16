@@ -1,9 +1,9 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: superduper
+  name: whoami
   labels:
-    name: superduper
+    name: whoami
 spec:
   type: LoadBalancer
   ports:
@@ -11,4 +11,4 @@ spec:
     targetPort: 4000
     protocol: TCP
   selector:
-    app: superduper
+    app: whoami
