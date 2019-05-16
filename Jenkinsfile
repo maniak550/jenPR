@@ -39,7 +39,7 @@ node {
         }  
         sh("sed -i.bak 's#${appRepo}#${imageTag}#' ./production/*.yml")
         
-        sh("kubectl --namespace=stage apply -f ./production/")
+        sh("kubectl --namespace=stage apply -f ./canary/")
         sh("echo http://`kubectl --namespace=stage get service/${appName} --output=json | jq -r '.status.loadBalancer.ingress[0].ip'` > ${appName}")
         break
 
