@@ -18,7 +18,7 @@ spec:
       - name: whoami
         image: acrdemo77.azurecr.io/whoami:v1
         ports:
-        - containerPort: 4000
+        - containerPort: 8000
       imagePullSecrets:
       - name: dupa1-auth
 ---
@@ -31,7 +31,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - port: 80
-    targetPort: 4000
+  - port: 8080
+    targetPort: 8000
   selector:
     app: whoami
