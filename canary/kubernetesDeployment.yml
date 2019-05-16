@@ -12,7 +12,7 @@ spec:
       name: whoami
       labels:
         app: whoami
-        env: dev
+        env: stage
     spec:
       containers:
       - name: whoami
