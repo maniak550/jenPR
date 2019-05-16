@@ -18,7 +18,7 @@ spec:
       - name: whoami
         image: acrdemo77.azurecr.io/whoami:v1
         ports:
-        - containerPort: 4000
+        - containerPort: 800
       imagePullSecrets:
       - name: dupa1-auth
 
